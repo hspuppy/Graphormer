@@ -2,16 +2,16 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-n_gpu=1
+n_gpu=2
 epoch=4
 max_epoch=$((epoch + 1))
-batch_size=128
+batch_size=64
 tot_updates=$((33000*epoch/batch_size/n_gpu))
 warmup_updates=$((tot_updates*16/100))
 
-CUDA_VISIBLE_DEVICES=3 fairseq-train \
+CUDA_VISIBLE_DEVICES=0,1 fairseq-train \
 --user-dir ../../graphormer \
---num-workers 16 \
+--num-workers 8 \
 --ddp-backend=legacy_ddp \
 --dataset-name ogbg-molhiv \
 --dataset-source ogb \
@@ -37,4 +37,5 @@ CUDA_VISIBLE_DEVICES=3 fairseq-train \
 --flag-m 3 \
 --flag-step-size 0.01 \
 --flag-mag 0 \
---pre-layernorm
+--pre-layernorm \
+--log-format tqdm

@@ -227,6 +227,9 @@ class GraphormerEncoder(FairseqEncoder):
             raise NotImplementedError
 
         x = self.layer_norm(self.activation_fn(self.lm_head_transform_weight(x)))
+        return_emb = unused.get('return_emb', False)
+        if return_emb:
+            emb = x[:, 0, :]
 
         # project back to size of vocabulary
         if self.share_input_output_embed and hasattr(
@@ -238,7 +241,10 @@ class GraphormerEncoder(FairseqEncoder):
         if self.lm_output_learned_bias is not None:
             x = x + self.lm_output_learned_bias
 
-        return x
+        if return_emb:
+            return x, emb
+        else:
+            return x
 
     def max_nodes(self):
         """Maximum output length supported by the encoder."""
